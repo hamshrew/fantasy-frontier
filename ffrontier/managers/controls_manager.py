@@ -30,7 +30,7 @@ class ControlContext:
         '''Retrieve the command associated with a key and event type.'''
         if event_type == pygame.KEYDOWN:
             return self.keydown_mappings.get(key)
-        elif event_type == pygame.KEYUP:
+        if event_type == pygame.KEYUP:
             return self.keyup_mappings.get(key)
         return None
 

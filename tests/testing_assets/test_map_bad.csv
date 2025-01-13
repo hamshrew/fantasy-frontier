@@ -1,0 +1,5 @@
+mapType,q,r,terrain,features
+flat,0,0,grass,tree;rock
+flat,1,0,water,boat
+flat,-1,1,mountain,
+pointy,0,0,forest,tree;animal

@@ -7,10 +7,19 @@ class UIVariableManager:
     screen_size: Tuple[int, int]
     viewport_size: Tuple[int, int]
 
-    def __init__(self):
-        '''Initialize the UIVariableManager class.'''
-        self.screen_size = (800, 600)
-        self.viewport_size = (800, 600)
+    def __init__(self, screen_size: Tuple[int, int] = (800, 600),
+                 viewport_size: Tuple[int, int] = (500, 600)) -> None:
+        '''Initialize the UIVariableManager class.
+
+            Args:
+                screen_size (Tuple[int, int]): The size of the screen.
+                viewport_size (Tuple[int, int]): The size of the viewport.
+
+            Returns:
+                None
+        '''
+        self.screen_size = screen_size
+        self.viewport_size = viewport_size
 
     def set_screen_size(self, size: Tuple[int, int]) -> None:
         '''Set the screen size.'''

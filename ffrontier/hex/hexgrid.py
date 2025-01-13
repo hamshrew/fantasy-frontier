@@ -1,5 +1,6 @@
 '''Handles all hex grid related operations'''
 from dataclasses import dataclass
+from typing import Tuple, List
 import math
 
 import pygame
@@ -14,44 +15,54 @@ class HexInfo:
     border: int
 
 
-def _axial_to_pixel_f(q: int, r: int, radius: int) -> tuple[int, int]:
-    y = round(radius * math.sqrt(3) * (r + q / 2))
-    x = round(radius * 3 / 2 * q)
+def _axial_to_pixel_f(q: int, r: int, radius: int,
+                      offset: Tuple[int, int] = (0, 0)) -> Tuple[int, int]:
+    y = round(radius * math.sqrt(3) * (r + q / 2)) + offset[1]
+    x = round(radius * 3 / 2 * q) + offset[0]
     return x, y
 
 
-def _axial_to_pixel_p(q: int, r: int, radius: int) -> tuple[int, int]:
-    x = round(radius * math.sqrt(3) * (q + r / 2))
-    y = round(radius * 3 / 2 * r)
+def _axial_to_pixel_p(q: int, r: int, radius: int,
+                      offset: Tuple[int, int] = (0, 0)) -> Tuple[int, int]:
+    x = round(radius * math.sqrt(3) * (q + r / 2)) + offset[0]
+    y = round(radius * 3 / 2 * r) + offset[1]
     return x, y
 
 
-def axial_to_pixel(hex_info: HexInfo, radius: int) -> tuple[int, int]:
+def axial_to_pixel(hex_info: HexInfo, radius: int,
+                   offset: Tuple[int, int] = (0, 0)) -> Tuple[int, int]:
+    '''Convert axial coordinates to pixel coordinates'''
     if hex_info.flat:
-        return _axial_to_pixel_f(hex_info.q, hex_info.r, radius)
-    else:
-        return _axial_to_pixel_p(hex_info.q, hex_info.r, radius)
+        return _axial_to_pixel_f(hex_info.q, hex_info.r, radius, offset)
+    return _axial_to_pixel_p(hex_info.q, hex_info.r, radius, offset)
 
 
 def axial_to_cube(hex_info: HexInfo) -> tuple[int, int, int]:
+    '''Convert axial coordinates to cube coordinates'''
     x = hex_info.q
     y = hex_info.r
     z = -x - y
     return x, y, z
 
 
+def calc_points(center: Tuple[int, int], radius: int, flat: bool) -> List[Tuple[float, float]]:
+    '''Calculate the points of a hexagon'''
+    return [
+        (center[0] + radius * math.cos(math.radians(60 * i - (0 if flat else 30))),
+         center[1] + radius * math.sin(math.radians(60 * i - (0 if flat else 30))))
+        for i in range(6)
+    ]
+
+
 def draw_hex(surface: pygame.Surface,
              hex_info: HexInfo,
              radius: int,
-             color: tuple[int, int, int]) -> None:
+             offset: Tuple[int, int] = (0, 0),
+             color: Tuple[int, int, int] = (255, 255, 255)) -> None:
     '''Draw a hexagon on the surface'''
     # Get the center of the hexagon from the HexInfo and run it through axial to pixel
-    center = axial_to_pixel(hex_info, radius)
-    points = [
-        (center[0] + radius * math.cos(math.radians(60 * i - (0 if hex_info.flat else 30))),
-         center[1] + radius * math.sin(math.radians(60 * i - (0 if hex_info.flat else 30))))
-        for i in range(6)
-    ]
+    center = axial_to_pixel(hex_info, radius, offset)
+    points = calc_points(center, radius, hex_info.flat)
 
     pygame.draw.polygon(surface, color, points, hex_info.border)
 
@@ -61,7 +72,6 @@ def mask_image(image: pygame.Surface, flat: bool) -> pygame.Surface:
     mask = pygame.Surface(image.get_size(), pygame.SRCALPHA)
     center = mask.get_rect().center
     radius = mask.get_width() // 2 if flat else mask.get_height() // 2
-    print(flat, center, radius)
     points = [
         (center[0] + radius * math.cos(math.radians(60 * i - (0 if flat else 30))),
          center[1] + radius * math.sin(math.radians(60 * i - (0 if flat else 30))))

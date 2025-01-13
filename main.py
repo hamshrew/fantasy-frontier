@@ -4,8 +4,13 @@ import math
 
 # Importing third-party libraries
 import pygame
+import pygame_gui
 
 # Importing local files
+from ffrontier.managers.ui_manager import UIVariableManager
+from ffrontier.ui.city_ui import CityUI
+from ffrontier.game.gamestate import GameState
+from ffrontier.managers.config_manager import ConfigManager
 
 # Constants
 
@@ -49,15 +54,29 @@ def draw_hex_p(surface, center, size, color):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption('Game')
+    pygame.display.set_caption('Fantasy Frontier')
+    clock = pygame.time.Clock()
+
+    # Initialize the UI manager
+    manager = pygame_gui.UIManager((800, 600))
+
+    # Initialize the UI variable manager
+    ui_manager = UIVariableManager()
+
+    # Initialize the CityUI class
+    city_ui = CityUI(manager, ui_manager)
+
     running = True
     size = 20
-    event: pygame.event.Event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_KP_PLUS)
 
-    thekey = event.key
-    print(type(thekey))
+    # Load the configuration file
+    config_manager = ConfigManager('config.ini')
+
+    # Initialize the game state
+    gstate = GameState(config_manager)
 
     while running:
+        time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
             if (event.type == pygame.QUIT or
                     (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
@@ -74,12 +93,12 @@ if __name__ == '__main__':
                 if size < 5:
                     size = 5
 
-        screen.fill((0, 0, 0))
-        draw_hex_p(screen, axial_to_pixel_p(4, 4, size), size, (255, 255, 255))
-        draw_hex_p(screen, axial_to_pixel_p(3, 4, size), size, (255, 255, 255))
-        draw_hex_p(screen, axial_to_pixel_p(4, 3, size), size, (255, 255, 255))
-        draw_hex_p(screen, axial_to_pixel_p(5, 4, size), size, (255, 255, 255))
-        draw_hex_p(screen, axial_to_pixel_p(4, 5, size), size, (255, 255, 255))
+            manager.process_events(event)
+            city_ui.handle_event(event, gstate)
+
+        manager.update(time_delta)
+        city_ui.draw(screen)
+
         pygame.display.flip()
 
     pygame.quit()

@@ -40,14 +40,13 @@ class ConfigManager:
 
     def save_config(self):
         '''Save the configuration file.'''
-        with open(self.config_file, 'w') as configfile:
+        with open(self.config_file, 'w', encoding='utf-8') as configfile:
             self.config.write(configfile)
 
     def validate_config(self):
         '''Validate the configuration file and assign types and defaults.'''
-        pass
 
-    def get(self, section: str, option: str) -> str:
+    def get(self, section: str, option: str) -> str | int | float | bool:
         '''Get an option from a section.'''
         # Check if option exists in section by checking the defaults
         if section not in self.types:
@@ -59,8 +58,8 @@ class ConfigManager:
         # return the correct type depending on the option type
         if option_type == ConfigType.INT:
             return self.config.getint(section, option, fallback=self.defaults[section][option])
-        elif option_type == ConfigType.FLOAT:
+        if option_type == ConfigType.FLOAT:
             return self.config.getfloat(section, option, fallback=self.defaults[section][option])
-        elif option_type == ConfigType.BOOL:
+        if option_type == ConfigType.BOOL:
             return self.config.getboolean(section, option, fallback=self.defaults[section][option])
         return self.config.get(section, option, fallback=self.defaults[section][option])
