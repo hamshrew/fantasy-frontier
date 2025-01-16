@@ -1,0 +1,8 @@
+{"orientation": true}
+{"coordinates": [0, 0], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [1, 0], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-1, 1], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [0, -1], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [1, -1], "layers": [{"image":"grasslands"}, {"image":"smiley"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [0, 1], "layers": [{"image": "smiley"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-1, 0], "layers": [], "features": [], "border": 1, "color": "#ff0000"}

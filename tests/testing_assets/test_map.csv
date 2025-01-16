@@ -1,5 +1,5 @@
-mapType,coordinates,terrain,features
-flat,"0,0",grass,tree;rock
-flat,"1,0",water,boat
-flat,"-1,1",mountain,
-pointy,"0,0",forest,tree;animal
+{"orientation": true}
+{"coordinates": [0, 0], "layers": [{"image": "grass"}], "features": ["tree", "rock"], "border": 0}
+{"coordinates": [1, 0], "layers": [{"image": "water"}], "features": ["boat"], "border": 0}
+{"coordinates": [-1, 1], "layers": [], "features": [], "border": 0, "color": "#ffffff"}
+{"coordinates": [0, 0], "layers": [{"image": "forest"}, {"image": "accent"}], "features": ["tree", "animal"], "border": 0}

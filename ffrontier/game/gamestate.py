@@ -1,4 +1,7 @@
 '''Handles the current state of the game, including the map and the players.'''
+
+import pygame
+
 from ffrontier.managers.config_manager import ConfigManager
 
 
@@ -19,3 +22,6 @@ class GameState:
     def get_turn(self) -> int:
         '''Get the current turn.'''
         return self.turn
+
+    def handle_event(self, event: pygame.event.Event):
+        '''Handle events for the game state.'''

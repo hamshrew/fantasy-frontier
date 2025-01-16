@@ -1,48 +1,111 @@
 '''Handles the map data file/structure.'''
-from typing import List, Dict, Tuple
-
+from typing import Dict, List, Tuple, TypedDict
 import csv
+import json
+
+import jsonschema
+
+from ffrontier.utils.parsing import hex_to_rgba
+
+# Constants
+MAP_CONFIG_SCHEMA = {
+    'type': 'object',
+    'properties': {
+        'orientation': {'type': 'boolean'}
+    },
+    'required': ['orientation']
+}
+
+MAP_DATA_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "coordinates": {"type": "array",
+                        "items": {"type": "integer"},
+                        "minItems": 2,
+                        "maxItems": 2},
+        "layers": {
+            "type": "array",
+            "items": {"type": "object",
+                      "properties": {"image": {"type": "string"},
+                                     "alpha": {"type": "integer"}},
+                      "required": ["image"]}
+        },
+        "features": {"type": "array", "items": {"type": "string"}},
+        "border": {"type": "integer"},
+        "color": {"type": "string"}
+    },
+    "required": ["coordinates"]
+}
+
+
+class TileData(TypedDict):
+    '''TypedDict for tile data.'''
+    coordinates: Tuple[int, int]
+    layers: List[Dict[str, str]]
+    features: List[str]
+    border: int
+    color: Tuple[int, int, int, int]
 
 
 class MapHandler:
     '''Handles the map data file/structure.'''
     map_file: str
-    map_data: List[Dict[str, str | Tuple[int, int]]]
+    map_data: List[TileData]
     flat: bool
 
     def __init__(self, map_file: str):
         '''Initialize the map.'''
         self.map_file = map_file
         self.map_data = []
-        self.flat = True
         self._load_map()
+
+    def _validate_map(self) -> None:
+        '''Validate the map data.'''
 
     def _load_map(self) -> None:
         '''Load and validate the map data.'''
         try:
-            with open(self.map_file, encoding='utf-8') as file:
-                reader = csv.DictReader(file)
-                # Check the header data for the necessary columns
-                assert reader.fieldnames is not None
-                if 'coordinates' not in reader.fieldnames:
-                    raise ValueError('Map data missing coordinates column')
-                if 'terrain' not in reader.fieldnames:
-                    raise ValueError('Map data missing terrain column')
-                if 'features' not in reader.fieldnames:
-                    raise ValueError('Map data missing features column')
-                for row in reader:
-                    # Check types and convert the data as necessary
-                    mdata: Dict[str, str | Tuple[int, int]] = {}
-                    coords = row['coordinates'].split(',')
-                    if len(coords) != 2:
-                        raise ValueError(f'Invalid coordinates: {coords}')
-                    mdata['coordinates'] = (int(coords[0]), int(coords[1]))
-                    mdata['terrain'] = str(row['terrain'])
-                    mdata['features'] = str(row['features'])
+            with open(self.map_file, 'r', encoding='utf-8') as file:
+                # the first line is the orientation of the map
+                lines = file.readlines()
+
+                if len(lines) < 2:
+                    raise ValueError('Map file is missing orientation and data')
+
+                jsonschema.validate(json.loads(lines[0]), MAP_CONFIG_SCHEMA)
+
+                config: dict = json.loads(lines[0])
+
+                orientation = config.get('orientation', None)
+                if orientation is None:
+                    raise ValueError('Map file is missing orientation')
+
+                self.flat = orientation
+
+                tiles = [json.loads(line) for line in lines[1:]]
+
+                for tile in tiles:
+                    jsonschema.validate(tile, MAP_DATA_SCHEMA)
+                    mdata: TileData = {
+                        'coordinates': (0, 0),
+                        'layers': [],
+                        'features': [],
+                        'border': 0,
+                        'color': (255, 255, 255, 255)
+                    }
+
+                    mdata['coordinates'] = tuple(tile['coordinates'])
+                    mdata['layers'] = tile.get('layers', [])
+                    mdata['features'] = tile.get('features', [])
+                    mdata['border'] = tile.get('border', 0)
+                    mdata['color'] = hex_to_rgba(tile.get('color', '#ffffff'))
+
                     self.map_data.append(mdata)
         except FileNotFoundError as e:
             raise FileNotFoundError(f'Error loading map file {self.map_file}: {e}') from e
         except AssertionError as e:
+            raise ValueError(f'Error loading map file {self.map_file}: {e}') from e
+        except json.JSONDecodeError as e:
             raise ValueError(f'Error loading map file {self.map_file}: {e}') from e
 
     def is_flat(self) -> bool:

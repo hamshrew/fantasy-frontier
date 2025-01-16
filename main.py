@@ -11,6 +11,10 @@ from ffrontier.managers.ui_manager import UIVariableManager
 from ffrontier.ui.city_ui import CityUI
 from ffrontier.game.gamestate import GameState
 from ffrontier.managers.config_manager import ConfigManager
+from ffrontier.hex.canvas import HexCanvas
+from ffrontier.managers.asset_manager import AssetManager
+from ffrontier.hex import hexgrid
+from ffrontier.hex import tileutils
 
 # Constants
 
@@ -63,8 +67,19 @@ if __name__ == '__main__':
     # Initialize the UI variable manager
     ui_manager = UIVariableManager()
 
+    # Assets
+    asset_manager = AssetManager('ffrontier/assets/configs/city_assets.json',
+                                 mask=hexgrid.mask_image_flat)
+
+    # Load the map data
+    tilemap = tileutils.TileMap(asset_manager, 'ffrontier/assets/maps/city/basic1.ffm')
+
+    # Initialize the HexCanvas class
+
+    canvas = HexCanvas(asset_manager, tilemap)
+
     # Initialize the CityUI class
-    city_ui = CityUI(manager, ui_manager)
+    city_ui = CityUI(manager, ui_manager, canvas)
 
     running = True
     size = 20

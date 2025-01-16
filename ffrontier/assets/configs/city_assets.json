@@ -1,0 +1,15 @@
+{
+    "images":
+        [
+            {"name": "grasslands", "path": "tests/testing_assets/grasslands.png"},
+            {"name": "smiley", "path": "tests/testing_assets/Testing_Smiley.png"}
+        ],
+    "sounds":
+        [
+
+        ],
+    "fonts":
+        [
+
+        ]
+}

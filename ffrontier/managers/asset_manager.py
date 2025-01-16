@@ -45,8 +45,24 @@ class AssetManager:
 
     def load_image(self, path: str, name: str, scale: Optional[int] = None,
                    mask: Optional[Callable[[pygame.Surface], pygame.Surface]] = None):
-        '''Load an image from a file and store it in the images dictionary.
-        Optionally scale and mask the image.'''
+        '''
+        Load an image from a file and store it in the images dictionary.
+        Optionally scale and mask the image. If the image name exists, this will replace it.
+
+            Args:
+                path: str: The path to the image file.
+                name: str: The name to store the image under.
+                scale: Optional[int]: The scale to resize the image to.
+                mask: Optional[Callable[[pygame.Surface], pygame.Surface]]:
+                    A function to mask the image.
+
+            Raises:
+                FileNotFoundError: If the image file is not found.
+
+            Returns:
+                None
+
+        '''
         try:
             self.images[name] = pygame.image.load(path)
         except FileNotFoundError as e:

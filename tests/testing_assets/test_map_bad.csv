@@ -1,4 +1,5 @@
-mapType,q,r,terrain,features
+0
+mapType,q,r,layers,features
 flat,0,0,grass,tree;rock
 flat,1,0,water,boat
 flat,-1,1,mountain,
