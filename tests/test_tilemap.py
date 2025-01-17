@@ -31,6 +31,12 @@ test_map_data = [{'coordinates': (0, 0), 'layers': [{'image': 'grass'}],
                  {'coordinates': (-1, 0),
                   'layers': [{'image': 'forest'}, {'image': 'accent'}],
                   'features': 'tree;animal', 'border': 0,
+                  'color': (255, 255, 255, 255)},
+                 {'coordinates': (0, -1), 'layers': [{'image': 'grass'}],
+                  'features': 'tree;rock', 'border': 0,
+                  'color': (255, 255, 255, 255)},
+                 {'coordinates': (1, -1), 'layers': [{'image': 'water'}],
+                  'features': 'boat', 'border': 0,
                   'color': (255, 255, 255, 255)}]
 
 
@@ -46,7 +52,7 @@ def test_tile_map(mocker):
 
     # Assertions
     MockDependency.assert_called_once_with('fake_map_file')  # Ensure MapHandler is instantiated
-    assert len(tile_map.tiles) == 5
+    assert len(tile_map.tiles) == 7
     assert tile_map.tiles[(0, 0)].hex_info.q == 0
     assert tile_map.tiles[(0, 0)].hex_info.r == 0
     assert tile_map.tiles[(0, 0)].hex_info.flat is False

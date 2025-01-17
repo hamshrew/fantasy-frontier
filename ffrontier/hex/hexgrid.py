@@ -72,6 +72,18 @@ def axial_to_cube(hex_info: HexInfo) -> Tuple[int, int, int]:
     return x, y, z
 
 
+def get_distance(hex1: HexInfo, hex2: HexInfo) -> int:
+    '''Get the distance between two hexagons'''
+    cube1 = axial_to_cube(hex1)
+    cube2 = axial_to_cube(hex2)
+    return (abs(cube1[0] - cube2[0]) + abs(cube1[1] - cube2[1]) + abs(cube1[2] - cube2[2])) // 2
+
+
+def get_cube_distance(cube1: Tuple[int, int, int], cube2: Tuple[int, int, int]) -> int:
+    '''Get the distance between two hexagons'''
+    return (abs(cube1[0] - cube2[0]) + abs(cube1[1] - cube2[1]) + abs(cube1[2] - cube2[2])) // 2
+
+
 def calc_points(center: Tuple[int, int], radius: int, flat: bool) -> List[Tuple[float, float]]:
     '''Calculate the points of a hexagon'''
     return [

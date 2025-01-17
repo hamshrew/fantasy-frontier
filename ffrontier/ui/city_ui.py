@@ -73,18 +73,36 @@ class CityUI:
         self.ui_panel = CityUIPanel(manager=self.manager, panel_rect=self.ui_panel_rect)
         self.canvas = canvas
         self.viewport = pygame.Surface(canvas.max_size)
+        self.canvas.vp_pos = (self.viewport_rect.width // 2 - self.viewport.get_width() // 2,
+                              self.viewport_rect.height // 2 - self.viewport.get_height() // 2)
 
     def handle_event(self, event: pygame.event.Event,
                      game_state: GameState) -> None:
         '''Handle events for the city management UI.'''
         game_state.handle_event(event)
         self.ui_panel.handle_event(event)
-        self.canvas.handle_event(event, self.viewport)
+
+        # rel = pygame.mouse.get_rel()
+        # adj_pos = (pygame.mouse.get_pos()[0] + rel[0],
+        #            pygame.mouse.get_pos()[1] + rel[1])
+
+        if self.viewport_rect.collidepoint(pygame.mouse.get_pos()):
+            self.canvas.handle_event(event, self.viewport, self.viewport_rect.size)
+        else:
+            self.canvas.highlighted_tile = None
+            self.canvas.is_dragging = False
+
+    def handle_command(self, command: str, game_state: GameState) -> None:
+        '''Handle commands for the city management UI.'''
+        self.canvas.handle_command(command, self.viewport, self.viewport_rect.size)
+        game_state.get_turn()  # This is just a placeholder for now
 
     def draw(self, surface: pygame.Surface):
         '''Draw the city management UI.'''
-        self.canvas.draw(self.viewport)
-        surface.blit(self.viewport, self.viewport_rect.topleft)
+        surface.fill((0, 0, 0, 0), self.viewport_rect)
+        self.canvas.draw(self.viewport, self.viewport_rect.size)
+        # Place the viewport surface centered on the rect
+        surface.blit(self.viewport, self.canvas.vp_pos)
         if self.canvas.highlighted_tile is not None:
             self.ui_panel.update_info_panel(str(self.canvas.highlighted_tile))
         else:

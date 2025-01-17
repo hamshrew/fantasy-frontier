@@ -49,8 +49,6 @@ class Tile:
     hex_info: hexgrid.HexInfo
     asset_manager: am.AssetManager
     images: List[Layer]
-    center: Tuple[int, int]
-    points: List[Tuple[int, int]]
 
     def __init__(self, hex_info: hexgrid.HexInfo,
                  images: List[Layer],
@@ -58,6 +56,16 @@ class Tile:
         self.hex_info = hex_info
         self.asset_manager = asset_manager
         self.images = images
+
+    @property
+    def center(self) -> Tuple[int, int]:
+        '''Get the center of the tile'''
+        return hexgrid.axial_to_pixel(self.hex_info, self.asset_manager.scale // 2)
+
+    @property
+    def radius(self) -> int:
+        '''Get the radius of the tile'''
+        return self.asset_manager.scale // 2
 
     def draw(self, surface: pygame.Surface,
              offset: Tuple[int, int] = (0, 0),
@@ -128,6 +136,11 @@ class TileMap:
             self.add_tile(tile)
         self._validate_map()
 
+    @property
+    def max_tile_size(self) -> int:
+        '''Get the maximum size of the tiles'''
+        return self.asset_manager.max_scale
+
     def get_map_size(self) -> Tuple[int, int]:
         '''Get the size of the map'''
         min_q = min(coord[0] for coord in self.tiles)
@@ -164,20 +177,15 @@ class TileMap:
         '''Validate the map data'''
         # This looks at tile coordinates and makes sure they have no holes
 
-        # Calculate min/max bounds for q and r from the tile dictionary
-        min_q = min(coord[0] for coord in self.tiles)
-        max_q = max(coord[0] for coord in self.tiles)
-        min_r = min(coord[1] for coord in self.tiles)
-        max_r = max(coord[1] for coord in self.tiles)
-
+        # Find the radius of the map
+        radius = 0
+        for q, r in self.tiles.keys():  # pylint: disable=consider-iterating-dictionary
+            radius = max(radius, hexgrid.get_cube_distance((0, 0, 0), (q, -q - r, r)))
         # Generate all expected coordinates based on the bounds
         expected_coords = set()
-        for q in range(min_q, max_q + 1):
-            for r in range(min_r, max_r + 1):
-                # Ensure the coordinates are valid in axial space (q + r + s = 0)
-                s = -q - r
-                if s in range(min_q, max_q + 1):  # Check if s is within valid bounds
-                    expected_coords.add((q, r))
+        for q in range(-radius, radius + 1):
+            for r in range(max(-radius, -q - radius), min(radius, -q + radius) + 1):
+                expected_coords.add((q, r))
 
         # Find missing coordinates
         missing_coords = expected_coords - self.tiles.keys()

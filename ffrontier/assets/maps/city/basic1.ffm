@@ -1,8 +1,20 @@
 {"orientation": true}
 {"coordinates": [0, 0], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
 {"coordinates": [1, 0], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
-{"coordinates": [-1, 1], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-1, 1], "layers": [], "features": [], "border": 0, "color": "#ff000041"}
 {"coordinates": [0, -1], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
 {"coordinates": [1, -1], "layers": [{"image":"grasslands"}, {"image":"smiley"}], "features": [], "border": 1, "color": "#ff0000"}
 {"coordinates": [0, 1], "layers": [{"image": "smiley"}], "features": [], "border": 1, "color": "#ff0000"}
 {"coordinates": [-1, 0], "layers": [], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [1, 1], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [2, -2], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [2, -1], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [0, -2], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-2, 0], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [0, 2], "layers": [{"image":"grasslands"}], "features": [], "border": 0, "color": "#ff000025"}
+{"coordinates": [-1, 2], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-1, -1], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-2, 1], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [2, 0], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [-2, 2], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}
+{"coordinates": [1, -2], "layers": [{"image":"grasslands"}], "features": [], "border": 1, "color": "#ff0000"}

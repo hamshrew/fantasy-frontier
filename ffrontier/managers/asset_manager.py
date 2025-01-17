@@ -7,6 +7,12 @@ import pygame
 import jsonschema
 
 # Local modules
+from ffrontier.hex import hexgrid
+
+
+# Constants
+MAX_SCALE = 400
+MIN_SCALE = 20
 
 
 class AssetManager:
@@ -30,12 +36,29 @@ class AssetManager:
         if asset_file:
             self.load_assets(asset_file, scale, mask)
 
+    @property
+    def max_scale(self) -> int:
+        '''Return the maximum scale.'''
+        return MAX_SCALE
+
+    @property
+    def min_scale(self) -> int:
+        '''Return the minimum scale.'''
+        return MIN_SCALE
+
     def load_assets(self, asset_file: str, scale: Optional[int] = None,
                     mask: Optional[Callable[[pygame.Surface], pygame.Surface]] = None) -> None:
         '''Loads the list of assets from the assets.json file and puts them into the manager.'''
         with open(asset_file, encoding='utf-8') as file:
             asset_data: Dict[str, Any] = json.load(file)
             jsonschema.validate(asset_data, asset_schema)
+            # override mask if it is given
+            if 'orientation' in asset_data:
+                if mask is None:
+                    if asset_data['orientation'] is True:
+                        mask = hexgrid.mask_image_flat
+                    else:
+                        mask = hexgrid.mask_image_pointy
             for image in asset_data['images']:
                 self.load_image(image['path'], image['name'], scale, mask)
             for sound in asset_data['sounds']:
@@ -114,11 +137,26 @@ class AssetManager:
         '''Reset the in_use list.'''
         self.in_use.clear()
 
+    def scale_up(self):
+        '''Scale up the images by 5.'''
+        self.scale += 5
+        self.scale = min(self.scale, MAX_SCALE)
+        self.rescale_images()
+
+    def scale_down(self):
+        '''Scale down the images by 5.'''
+        self.scale -= 5
+        self.scale = max(self.scale, MIN_SCALE)
+        self.rescale_images()
+
 
 asset_schema = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+        "orientation": {
+            "type": "boolean",
+            "default": True},
         "images": {
             "type": "array",
             "items": {

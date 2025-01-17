@@ -1,4 +1,5 @@
 {
+    "orientation": true,
     "images":
         [
             {"name": "grasslands", "path": "tests/testing_assets/grasslands.png"},
