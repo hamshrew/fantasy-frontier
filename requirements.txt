@@ -17,7 +17,7 @@ pygame_gui==0.6.13
 python-i18n==0.3.9
 referencing==0.35.1
 rpds-py==0.22.3
-setuptools==75.1.0
+setuptools==78.1.1
 tomlkit==0.13.2
 typing_extensions==4.12.2
 wheel==0.44.0
